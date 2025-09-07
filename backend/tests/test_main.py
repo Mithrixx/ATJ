@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from sqlmodel import SQLModel, create_engine, Session
-from backend.main import app, get_session
-from backend.db import Trade
+from backend.main import app
+from backend.db import get_session, Trade
 
 def test_create_and_read_trade():
     # Use an in-memory SQLite database.

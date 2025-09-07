@@ -3,7 +3,7 @@ from typing import List
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
-from backend.db import Trade, get_session, create_db_and_tables
+from .db import Trade, get_session, create_db_and_tables
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
