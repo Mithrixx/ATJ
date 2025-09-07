@@ -1,8 +1,22 @@
-from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from typing import List
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from sqlmodel import Session, select
+from backend.db import Trade, get_session, create_db_and_tables
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # This code runs on startup
+    print("INFO:     Lifespan event: Creating database and tables.")
+    create_db_and_tables()
+    yield
+    # This code runs on shutdown
+    print("INFO:     Lifespan event: Application shutdown.")
 
+app = FastAPI(lifespan=lifespan)
+
+# CORS Middleware
 origins = [
     "https://atjabu.netlify.app",
     "http://localhost:3000",
@@ -16,6 +30,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+# Endpoint to create a new trade
+@app.post("/trades/", response_model=Trade)
+def create_trade(trade: Trade, session: Session = Depends(get_session)):
+    session.add(trade)
+    session.commit()
+    session.refresh(trade)
+    return trade
+
+# Endpoint to get all trades
+@app.get("/trades/", response_model=List[Trade])
+def read_trades(session: Session = Depends(get_session)):
+    trades = session.exec(select(Trade)).all()
+    return trades
