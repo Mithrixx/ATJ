@@ -6,7 +6,7 @@ function App() {
   const [apiResponse, setApiResponse] = useState("Loading...");
 
   useEffect(() => {
-    fetch(process.env.REACT_APP_API_URL)
+    fetch(`${process.env.REACT_APP_API_URL}trades/`)
       .then(res => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
