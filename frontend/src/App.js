@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import TradeList from './components/TradeList';
+import TradeForm from './components/TradeForm';
 
 function App() {
-  const [apiResponse, setApiResponse] = useState("Loading...");
+  const [trades, setTrades] = useState([]);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchTrades = () => {
     fetch(`${process.env.REACT_APP_API_URL}trades/`)
       .then(res => {
         if (!res.ok) {
@@ -13,35 +15,24 @@ function App() {
         }
         return res.json();
       })
-      .then(data => {
-        setApiResponse(JSON.stringify(data, null, 2));
-      })
-      .catch(err => {
-        setApiResponse(`Failed to fetch: ${err.toString()}`);
-      });
+      .then(data => setTrades(data))
+      .catch(err => setError(err.toString()));
+  };
+
+  useEffect(() => {
+    fetchTrades();
   }, []);
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Response from the backend API:
-        </p>
-        <pre style={{ textAlign: 'left', backgroundColor: '#282c34', padding: '1rem', borderRadius: '5px', width: '80%' }}>
-          {apiResponse}
-        </pre>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </p>
+        <h1>Advanced Trading Journal</h1>
       </header>
+      <main>
+        <TradeForm onTradeAdded={fetchTrades} />
+        <hr />
+        {error ? <p style={{ color: 'red' }}>{error}</p> : <TradeList trades={trades} />}
+      </main>
     </div>
   );
 }
