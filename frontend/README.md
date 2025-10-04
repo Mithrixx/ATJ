@@ -1,5 +1,7 @@
 # Getting Started with Create React App
 
+> **Verification Note**: Access and lint capabilities verified - this is a test change for PR verification.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
